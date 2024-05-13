@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Create Poll{% endblock %}
+{% block content %}
+<h3 align="center">Create Poll for {{ group.name }}</h3>
+<form method="POST" action="{{ url_for('views.create_poll') }}">
+  <div class="form-group">
+      <label for="question">Soru</label>
+      <input type="text" class="form-control" id="question" name="question" placeholder="Oylama Sorusunu Giriniz">
+  </div>
+  <div class="form-group">
+      <label for="options">Seçenekler</label>
+      <input type="text" class="form-control" id="option1" name="option" placeholder="Seçenek 1">
+      <input type="text" class="form-control" id="option2" name="option" placeholder="Seçenek 2">
+      <!-- İhtiyacınıza göre daha fazla seçenek ekleyebilirsiniz -->
+  </div>
+  <input type="hidden" name="group_id" value="{{ group.id }}">
+  <br>
+  <button type="submit" class="btn btn-primary">Anket Oluştur</button>
+</form>
+
+{% endblock %}

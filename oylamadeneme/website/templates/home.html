@@ -1,0 +1,22 @@
+{% extends "base.html" %} 
+{% block title %}Ana Sayfa{% endblock %} 
+{% block content %}
+    <h1 align="center">Oylamalar</h1>
+    <ul class="list-group list-group-flush" id="polls">
+      {% for poll in user.polls %}
+      <li class="list-group-item">
+        {{ poll.question }}
+        <button type="button" class="close" onClick="deletePoll({{ poll.id }})">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </li>
+      {% endfor %}
+    </ul>
+    <form method="POST">
+      <textarea name="poll" id="poll" class="form-control"></textarea>
+      <br />
+      <div align="center">
+        <button type="submit" class="btn btn-primary">Anket Ekle</button>
+      </div>
+    </form>
+    {% endblock %}
