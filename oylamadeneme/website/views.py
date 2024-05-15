@@ -15,33 +15,25 @@ def home():
     return render_template("home.html", user=current_user)
 
 
-@views.route('/create-poll', methods=['POST'])
-@login_required
+@views.route('/create_poll', methods = ['GET', 'POST'])
 def create_poll():
-    if request.method == 'POST':
-        question = request.form.get('question')
-        group_id = request.form.get('group_id')  # Grup kimliğini formdan al
-        options = request.form.getlist('option') #Seçenek almak için
-        
-        new_poll = Poll(question=question, options=options, group_id=group_id)  
+    form = OylamaForm()
+    group = None
+    if form.validate_on_submit():
+        question = form.question.data
+        options = form.options.data.split('\n')
 
-        # Kullanıcının üye olduğu grupları al
-        user_groups = get_user_groups(current_user.id)
-        # Eğer kullanıcı herhangi bir gruba üye değilse, bir hata mesajı göster veya uygun bir işlem yap
-        if not user_groups:
-            flash('Oylama oluşturmak için bir gruba üye olmalısınız.', category='error')
-            return redirect(url_for('views.home'))
-        
-        # İlk gruba ait bir anket oluştur
-        new_poll.group_id = user_groups[0].id
+        if current_user.is_authenticated:
+            group = current_user.groups[0] 
 
+        new_poll = Poll(question=question, options='\n'.join(options))
         db.session.add(new_poll)
         db.session.commit()
-        flash('Anket başarıyla oluşturuldu!', category='success')
-        return redirect(url_for('views.list_polls'))
-    
-    user_groups = current_user.groups
-    return render_template("create_poll.html", user=current_user)
+
+        vote_code = create_vote_code()  
+
+        return f"Anket başarıyla oluşturuldu!\n Oylama Katılım Kodu: {vote_code}"
+    return render_template ('create_poll.html', user=current_user,group=group)
 
 @views.route('/vote/<int:poll_id>', methods=['GET', 'POST'])
 @login_required
