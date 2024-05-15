@@ -2,8 +2,14 @@ from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
 import json
+from flask_wtf import FlaskForm
+from wtforms import StringField, TextAreaField, SubmitField
+from wtforms.validators import DataRequired,Length 
 
-
+class OylamaForm(FlaskForm):
+    question = StringField('Question',validators=[DataRequired(), Length(max=100)])
+    options = TextAreaField('Options',validators=[DataRequired(),Length(max=500)])
+    submit = SubmitField('Create Poll')
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +25,7 @@ class Poll(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(250), nullable=False)
     options = db.Column(db.Text, nullable=False)
-    group_id = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), nullable=False)
 
     def set_options(self, options):  # JSON verilerini kaydetmek için özel bir metot
         self.options = json.dumps(options)
