@@ -1,7 +1,10 @@
 {% extends "base.html" %}
-{% block title %}Create Poll{% endblock %}
+{% block title %}Oylama Oluştur{% endblock %}
 {% block content %}
-<h3 align="center">Create Poll for {{ group.name }}</h3>
+<h3 align="center">Oylama Oluştur {% if group %} {{ group.name }} {% endif %}</h3>
+{% if user.is_authenticated %}
+<p>Hoş geldiniz, {{ user.username }}!</p>
+{% endif %}
 <form method="POST" action="{{ url_for('views.create_poll') }}">
   <div class="form-group">
       <label for="question">Soru</label>
@@ -9,13 +12,15 @@
   </div>
   <div class="form-group">
       <label for="options">Seçenekler</label>
-      <input type="text" class="form-control" id="option1" name="option" placeholder="Seçenek 1">
-      <input type="text" class="form-control" id="option2" name="option" placeholder="Seçenek 2">
+      <input type="text" class="form-control" id="option1" name="options" placeholder="Seçenek 1">
+      <input type="text" class="form-control" id="option2" name="options" placeholder="Seçenek 2">
       <!-- İhtiyacınıza göre daha fazla seçenek ekleyebilirsiniz -->
   </div>
-  <input type="hidden" name="group_id" value="{{ group.id }}">
+  <input type="hidden" name="group_id" value="{% if group %} {{ group.id }} {% endif %}">
   <br>
   <button type="submit" class="btn btn-primary">Anket Oluştur</button>
 </form>
-
+{% if vote_code %}
+<p>Oylama Katılım Kodu: {{ vote_code }}</p>
+{% endif %}
 {% endblock %}
